@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>SmartWean AI - 智慧呼吸器脫離決策支援系統</title>
+  <style>
+    :root {
+      --bg-main: #F4F6F7; --bg-card: #FFFFFF; --text-main: #2C3E50; --text-muted: #7F8C8D;
+      --border-color: #E5E8E8; --morandi-blue: #4A6984; --morandi-green: #678A74;
+      --morandi-green-light: #EBF2ED; --morandi-red: #C06C84;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: var(--bg-main); color: var(--text-main); padding: 24px; }
+    .header { display: flex; justify-content: space-between; background: var(--bg-card); padding: 16px 24px; border-radius: 10px; margin-bottom: 20px; }
+    .brand { font-size: 20px; font-weight: 700; color: var(--morandi-blue); }
+    .patient-group { display: flex; gap: 20px; font-size: 14px; }
+    .grid { display: grid; grid-template-columns: 320px 1fr; gap: 20px; }
+    .card { background: var(--bg-card); border-radius: 10px; padding: 20px; border: 1px solid var(--border-color); }
+    .score { font-size: 56px; font-weight: 800; color: var(--morandi-green); text-align: center; margin: 10px 0; }
+    .shap-row { display: grid; grid-template-columns: 200px 1fr 60px; align-items: center; gap: 12px; font-size: 13px; margin-bottom: 12px; }
+    .bar-bg { position: relative; width: 100%; height: 18px; background: var(--bg-main); border-radius: 4px; }
+    .bar-center { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: #DCDFE6; }
+    .bar-fill { position: absolute; top: 2px; bottom: 2px; border-radius: 2px; }
+    .pos { left: 50%; background: var(--morandi-green); }
+    .neg { right: 50%; background: var(--morandi-red); }
+    .action-card { grid-column: span 2; margin-top: 20px; }
+    .action-item { background: var(--bg-main); padding: 12px 16px; border-radius: 6px; margin-top: 10px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="brand">🫁 SmartWean AI 智慧脫離決策支援系統</div>
+    <div class="patient-group" id="patient-info">載入中...</div>
+  </header>
+
+  <main class="grid">
+    <section class="card">
+      <h3>智慧脫離預測指數</h3>
+      <div class="score" id="score-val">--%</div>
+      <p id="score-desc" style="text-align:center; font-size:13px; color:var(--text-muted);"></p>
+    </section>
+
+    <section class="card">
+      <h3>個人化關鍵影響因子 (XAI - SHAP 分析)</h3>
+      <div id="shap-list" style="margin-top:16px;"></div>
+    </section>
+
+    <section class="card action-card">
+      <h3>💡 智慧臨床建議與處置提醒</h3>
+      <div id="action-list"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
