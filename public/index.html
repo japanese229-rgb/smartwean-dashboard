@@ -2,54 +2,155 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <title>SmartWean AI - 智慧呼吸器脫離決策支援系統</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartWean RT - 智慧呼吸器脫離決策支援系統</title>
   <style>
     :root {
-      --bg-main: #F4F6F7; --bg-card: #FFFFFF; --text-main: #2C3E50; --text-muted: #7F8C8D;
-      --border-color: #E5E8E8; --morandi-blue: #4A6984; --morandi-green: #678A74;
-      --morandi-green-light: #EBF2ED; --morandi-red: #C06C84;
+      --bg-main: #F4F6F7;
+      --bg-card: #FFFFFF;
+      --text-main: #2C3E50;
+      --text-muted: #7F8C8D;
+      --border-color: #E5E8E8;
+      --morandi-blue: #4A6984;
+      --morandi-green: #678A74;
+      --morandi-yellow: #D9A05B;
+      --morandi-red: #C06C84;
+      --shadow-sm: 0 2px 8px rgba(44, 62, 80, 0.05);
+      --radius-md: 10px;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, sans-serif; background: var(--bg-main); color: var(--text-main); padding: 24px; }
-    .header { display: flex; justify-content: space-between; background: var(--bg-card); padding: 16px 24px; border-radius: 10px; margin-bottom: 20px; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg-main); color: var(--text-main); padding: 24px; line-height: 1.6; }
+
+    /* Header */
+    .header { background: var(--bg-card); padding: 16px 24px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); margin-bottom: 20px; }
+    .header-top { display: flex; justify-content: space-between; align-items: center; }
     .brand { font-size: 20px; font-weight: 700; color: var(--morandi-blue); }
     .patient-group { display: flex; gap: 20px; font-size: 14px; }
-    .grid { display: grid; grid-template-columns: 320px 1fr; gap: 20px; }
-    .card { background: var(--bg-card); border-radius: 10px; padding: 20px; border: 1px solid var(--border-color); }
-    .score { font-size: 56px; font-weight: 800; color: var(--morandi-green); text-align: center; margin: 10px 0; }
-    .shap-row { display: grid; grid-template-columns: 200px 1fr 60px; align-items: center; gap: 12px; font-size: 13px; margin-bottom: 12px; }
+    
+    .nav-tabs { display: flex; gap: 12px; margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 12px; }
+    .tab-btn { background: none; border: none; padding: 8px 16px; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 6px; }
+    .tab-btn.active { background: var(--morandi-blue); color: #fff; }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Dashboard Layout */
+    .grid-dashboard { display: grid; grid-template-columns: 340px 1fr; gap: 20px; }
+    .card { background: var(--bg-card); border-radius: var(--radius-md); padding: 20px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); }
+    .card-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; display: flex; justify-content: space-between; }
+
+    .score-box { text-align: center; padding: 10px 0; }
+    .score-val { font-size: 56px; font-weight: 800; color: var(--morandi-green); line-height: 1; }
+    .traffic-lights { display: flex; justify-content: center; gap: 16px; margin-top: 16px; font-size: 12px; color: var(--text-muted); border-top: 1px dashed var(--border-color); padding-top: 12px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; opacity: 0.3; }
+    .dot.active { opacity: 1; transform: scale(1.2); }
+    .dot-green { background: var(--morandi-green); }
+    .dot-yellow { background: var(--morandi-yellow); }
+    .dot-red { background: var(--morandi-red); }
+
+    /* SHAP 雙向圖形 */
+    .shap-row { display: grid; grid-template-columns: 220px 1fr 60px; align-items: center; gap: 12px; font-size: 13px; margin-bottom: 12px; }
     .bar-bg { position: relative; width: 100%; height: 18px; background: var(--bg-main); border-radius: 4px; }
     .bar-center { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: #DCDFE6; }
     .bar-fill { position: absolute; top: 2px; bottom: 2px; border-radius: 2px; }
     .pos { left: 50%; background: var(--morandi-green); }
     .neg { right: 50%; background: var(--morandi-red); }
+
     .action-card { grid-column: span 2; margin-top: 20px; }
-    .action-item { background: var(--bg-main); padding: 12px 16px; border-radius: 6px; margin-top: 10px; font-size: 14px; }
+
+    /* 企劃書四大區塊 */
+    .proposal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .block-tag { display: inline-block; background: var(--morandi-blue); color: #fff; font-size: 12px; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px; }
+    .proposal-card ul { padding-left: 20px; font-size: 14px; }
+    .proposal-card li { margin-bottom: 6px; }
   </style>
 </head>
 <body>
+
   <header class="header">
-    <div class="brand">🫁 SmartWean AI 智慧脫離決策支援系統</div>
-    <div class="patient-group" id="patient-info">載入中...</div>
+    <div class="header-top">
+      <div class="brand">🫁 SmartWean RT 智慧脫離決策支援系統</div>
+      <div class="patient-group" id="patient-info">載入病患資料中...</div>
+    </div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('dashboard')">💻 臨床 Dashboard (UI 原型)</button>
+      <button class="tab-btn" onclick="switchTab('proposal')">📄 競賽企劃書四大重點說明</button>
+    </div>
   </header>
 
-  <main class="grid">
-    <section class="card">
-      <h3>智慧脫離預測指數</h3>
-      <div class="score" id="score-val">--%</div>
-      <p id="score-desc" style="text-align:center; font-size:13px; color:var(--text-muted);"></p>
-    </section>
+  <!-- 頁籤 1： Dashboard -->
+  <div id="tab-dashboard" class="tab-content active">
+    <main class="grid-dashboard">
+      <section class="card">
+        <div class="card-title">智慧脫離預測指數</div>
+        <div class="score-box">
+          <div style="font-size:13px; color:var(--morandi-green); font-weight:bold; margin-bottom:6px;" id="status-label">--</div>
+          <div class="score-val" id="score-val">--%</div>
+          <p style="font-size:13px; color:var(--text-muted); margin-top:8px;" id="score-desc">載入中...</p>
+        </div>
+        <div class="traffic-lights">
+          <span><i class="dot dot-green active"></i> 高成功率 (≥75%)</span>
+          <span><i class="dot dot-yellow"></i> 條件觀察中</span>
+          <span><i class="dot dot-red"></i> 高拔管風險</span>
+        </div>
+      </section>
 
-    <section class="card">
-      <h3>個人化關鍵影響因子 (XAI - SHAP 分析)</h3>
-      <div id="shap-list" style="margin-top:16px;"></div>
-    </section>
+      <section class="card">
+        <div class="card-title">
+          <span>個人化關鍵影響因子 (XAI - SHAP 分析)</span>
+          <span style="font-size:12px; color:var(--text-muted);">🟢 正向推力 | 🔴 負向阻力</span>
+        </div>
+        <div id="shap-list" style="margin-top:12px;">載入分析數據中...</div>
+      </section>
 
-    <section class="card action-card">
-      <h3>💡 智慧臨床建議與處置提醒</h3>
-      <div id="action-list"></div>
-    </section>
-  </main>
+      <section class="card action-card">
+        <div class="card-title">💡 智慧臨床建議與處置提醒 (Actionable Guidance)</div>
+        <div id="action-list">載入建議中...</div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 頁籤 2： 企劃書四大重點 -->
+  <div id="tab-proposal" class="tab-content">
+    <div class="proposal-grid">
+      <section class="card proposal-card">
+        <span class="block-tag">區塊一</span>
+        <h3>設計背景與臨床痛點 (Background & Problem)</h3>
+        <ul style="margin-top:12px;">
+          <li><strong>痛點精準化：</strong>加護病房傳統 RSBI 等單點指標敏感度與特異度不足。過早拔管增加再插管與併發症死亡率；過遲拔管增加 VAP 感染率與 ICU 住院天數。</li>
+          <li><strong>多模態解決方案：</strong>無縫對接 EMR、RCS 與生理監測儀，融合抽血檢驗（ABG）、連續生理參數與動態呼吸力學進行持續動態監測。</li>
+        </ul>
+      </section>
+
+      <section class="card proposal-card">
+        <span class="block-tag">區塊二</span>
+        <h3>系統架構與 AI 模組 (Architecture & AI)</h3>
+        <ul style="margin-top:12px;">
+          <li><strong>預測目標：</strong>精準預測實施 SBT 後 **拔管 48 小時內成功脫離** 之機率。</li>
+          <li><strong>可解釋性 AI (XAI)：</strong>採用 LightGBM / XGBoost 結合 SHAP 分析，雙向視覺化呈現 Top 5 正負向關鍵臨床因子，消除黑盒子疑慮。</li>
+        </ul>
+      </section>
+
+      <section class="card proposal-card">
+        <span class="block-tag">區塊三</span>
+        <h3>臨床介面原型 (UI/UX Showcase)</h3>
+        <ul style="margin-top:12px;">
+          <li><strong>莫蘭迪色系設計：</strong>採柔和低飽和度色彩，降低臨床醫護長時看螢幕之視覺疲勞。</li>
+          <li><strong>三色燈號警示：</strong>綠燈（≥75% 建議 SBT）、黃燈（觀察）、紅燈（高風險）。搭配雙向條形圖提供具體可干預之處置建議。</li>
+        </ul>
+      </section>
+
+      <section class="card proposal-card">
+        <span class="block-tag">區塊四</span>
+        <h3>預期臨床與效益改善 (Impact & Value)</h3>
+        <ul style="margin-top:12px;">
+          <li><strong>品質指標：</strong>提升首次拔管成功率、降低 48 小時內拔管後再插管率。</li>
+          <li><strong>營運與財務指標：</strong>縮短平均呼吸器使用天數與加護病房住院天數、減少 RT 無效評估時間、降低健保費用扣減風險。</li>
+        </ul>
+      </section>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>
