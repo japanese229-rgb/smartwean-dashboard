@@ -17,6 +17,8 @@
       --morandi-red: #C06C84;
       --shadow-sm: 0 2px 8px rgba(44, 62, 80, 0.05);
       --radius-md: 10px;
+      --grid: #EDEFF0;
+      --band: rgba(103, 138, 116, 0.12);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,40 +26,184 @@
 
     /* Header */
     .header { background: var(--bg-card); padding: 16px 24px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); margin-bottom: 20px; }
-    .header-top { display: flex; justify-content: space-between; align-items: center; }
+    .header-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
     .brand { font-size: 20px; font-weight: 700; color: var(--morandi-blue); }
-    .patient-group { display: flex; gap: 20px; font-size: 14px; }
-    
-    .nav-tabs { display: flex; gap: 12px; margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 12px; }
+    .unit-info { font-size: 13px; color: var(--text-muted); }
+
+    .nav-tabs { display: flex; gap: 12px; margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 12px; flex-wrap: wrap; }
     .tab-btn { background: none; border: none; padding: 8px 16px; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 6px; }
     .tab-btn.active { background: var(--morandi-blue); color: #fff; }
 
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* Dashboard Layout */
-    .grid-dashboard { display: grid; grid-template-columns: 340px 1fr; gap: 20px; }
     .card { background: var(--bg-card); border-radius: var(--radius-md); padding: 20px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); }
-    .card-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; display: flex; justify-content: space-between; }
+    .card-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+    .muted { color: var(--text-muted); }
+    .loading { padding: 40px; text-align: center; color: var(--text-muted); }
 
-    .score-box { text-align: center; padding: 10px 0; }
-    .score-val { font-size: 56px; font-weight: 800; color: var(--morandi-green); line-height: 1; }
-    .traffic-lights { display: flex; justify-content: center; gap: 16px; margin-top: 16px; font-size: 12px; color: var(--text-muted); border-top: 1px dashed var(--border-color); padding-top: 12px; }
-    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; opacity: 0.3; }
-    .dot.active { opacity: 1; transform: scale(1.2); }
+    /* 燈號 */
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
     .dot-green { background: var(--morandi-green); }
     .dot-yellow { background: var(--morandi-yellow); }
     .dot-red { background: var(--morandi-red); }
+    .c-green { color: var(--morandi-green); }
+    .c-yellow { color: var(--morandi-yellow); }
+    .c-red { color: var(--morandi-red); }
+    .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; background: #EAECEE; color: #566573; white-space: nowrap; }
+    .badge-warn { background: #F6E3EA; color: var(--morandi-red); }
+
+    /* 病人清單 */
+    .list-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+    .summary-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+    .chip { display: flex; align-items: center; gap: 6px; background: var(--bg-main); padding: 6px 12px; border-radius: 6px; font-size: 13px; }
+    .chip strong { font-size: 16px; }
+    .sort-group { display: flex; gap: 6px; font-size: 13px; align-items: center; }
+    .sort-btn { border: 1px solid var(--border-color); background: var(--bg-card); padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 13px; color: var(--text-main); }
+    .sort-btn.active { border-color: var(--morandi-blue); color: var(--morandi-blue); font-weight: 600; }
+    .table-wrap { overflow-x: auto; }
+    table.patient-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 1120px; }
+    .patient-table .diag { min-width: 150px; }
+    .score-cell .new-badge { margin-top: 0; }
+    .patient-table th { text-align: left; font-size: 12px; color: var(--text-muted); font-weight: 600; padding: 8px 10px; border-bottom: 2px solid var(--border-color); white-space: nowrap; }
+    .patient-table td { padding: 12px 10px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+    .patient-table tbody tr { cursor: pointer; transition: background .15s; }
+    .patient-table tbody tr:hover { background: #F8F9F9; }
+    .patient-table tbody tr:focus-visible { outline: 2px solid var(--morandi-blue); outline-offset: -2px; }
+    .bed { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .score-cell { display: flex; align-items: center; gap: 10px; }
+    .score-num { font-size: 20px; font-weight: 800; min-width: 52px; font-variant-numeric: tabular-nums; }
+    .abn { color: var(--morandi-red); font-weight: 600; }
+
+    /* 個人面板 */
+    .back-btn { background: none; border: none; color: var(--morandi-blue); font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 12px; padding: 4px 0; }
+    .info-card { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
+    .info-bed { font-size: 30px; font-weight: 800; color: var(--morandi-blue); line-height: 1; }
+    .info-bed small { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 4px; }
+    .info-name { font-size: 18px; font-weight: 700; }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px 20px; flex: 1; min-width: 260px; font-size: 13px; }
+    .info-grid dt { color: var(--text-muted); font-size: 12px; }
+    .info-grid dd { font-weight: 600; }
+
+    .detail-main { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+    .data-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .data-card { padding: 16px; }
+    .data-card .card-title { font-size: 14px; margin-bottom: 10px; color: var(--morandi-blue); }
+    .kv { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; padding: 4px 0; border-bottom: 1px dashed var(--border-color); }
+    .kv:last-child { border-bottom: none; }
+    .kv .v { font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+    .kv .u { font-size: 11px; color: var(--text-muted); font-weight: 400; margin-left: 3px; }
+    .drug { font-size: 13px; padding: 6px 10px; background: var(--bg-main); border-radius: 6px; margin-top: 6px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+    .big-stat { font-size: 40px; font-weight: 800; color: var(--morandi-blue); line-height: 1.1; }
+    .progress { height: 8px; background: var(--bg-main); border-radius: 4px; overflow: hidden; margin-top: 6px; }
+    .progress > div { height: 100%; background: var(--morandi-blue); }
+
+    /* 置頂摘要列 */
+    .summary-strip { display: grid; grid-template-columns: minmax(220px, auto) minmax(0, 1.6fr) minmax(0, 1fr); gap: 24px; margin-bottom: 20px; border-left: 6px solid var(--border-color); align-items: center; }
+    .strip-green { border-left-color: var(--morandi-green); }
+    .strip-yellow { border-left-color: var(--morandi-yellow); }
+    .strip-red { border-left-color: var(--morandi-red); }
+    .summary-strip > div + div { border-left: 1px solid var(--border-color); padding-left: 24px; }
+    .strip-score-row { display: flex; align-items: center; gap: 14px; }
+    .strip-val { font-size: 52px; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
+    .strip-title { font-size: 18px; font-weight: 700; line-height: 1.4; }
+    .action-tag { display: inline-block; font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 999px; color: #fff; white-space: nowrap; }
+    .tag-green { background: var(--morandi-green); }
+    .tag-yellow { background: var(--morandi-yellow); }
+    .tag-red { background: var(--morandi-red); }
+    .new-badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #FBF1E3; color: #9A6A2C; border: 1px solid var(--morandi-yellow); white-space: nowrap; margin-top: 6px; }
+    .delta { font-size: 12px; font-weight: 600; white-space: nowrap; }
+    .trend-cell { display: flex; align-items: center; gap: 8px; }
+    .chip-new { background: #FBF1E3; color: #9A6A2C; font-weight: 600; }
+
+    /* SBT 檢核 */
+    .check-row { display: grid; grid-template-columns: 20px 1fr auto; gap: 8px; align-items: center; font-size: 13px; padding: 5px 0; border-bottom: 1px dashed var(--border-color); }
+    .check-icon { font-weight: 800; color: var(--morandi-green); text-align: center; }
+    .check-val { font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
+    .check-row.fail { color: var(--morandi-red); }
+    .check-row.fail .check-icon { color: var(--morandi-red); }
+    .check-note { font-size: 12px; margin-top: 10px; padding: 8px 10px; background: var(--bg-main); border-radius: 6px; }
+
+    .right-col { display: flex; flex-direction: column; gap: 20px; }
+    .score-label { font-size: 13px; font-weight: 700; }
+    .traffic-lights { display: flex; justify-content: center; gap: 14px; margin-top: 16px; font-size: 12px; color: var(--text-muted); border-top: 1px dashed var(--border-color); padding-top: 12px; flex-wrap: wrap; }
+    .traffic-lights span { display: flex; align-items: center; gap: 4px; opacity: .45; }
+    .traffic-lights span.on { opacity: 1; font-weight: 600; color: var(--text-main); }
+    .strip-trend { margin-top: 10px; font-size: 12px; }
+    .summary-strip .traffic-lights { justify-content: flex-start; margin-top: 8px; padding-top: 8px; gap: 12px; }
 
     /* SHAP 雙向圖形 */
-    .shap-row { display: grid; grid-template-columns: 220px 1fr 60px; align-items: center; gap: 12px; font-size: 13px; margin-bottom: 12px; }
-    .bar-bg { position: relative; width: 100%; height: 18px; background: var(--bg-main); border-radius: 4px; }
+    .shap-row { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 44px; align-items: center; gap: 10px; font-size: 13px; margin-bottom: 12px; }
+    .bar-bg { position: relative; width: 100%; height: 16px; background: var(--bg-main); border-radius: 4px; }
     .bar-center { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: #DCDFE6; }
     .bar-fill { position: absolute; top: 2px; bottom: 2px; border-radius: 2px; }
     .pos { left: 50%; background: var(--morandi-green); }
     .neg { right: 50%; background: var(--morandi-red); }
 
-    .action-card { grid-column: span 2; margin-top: 20px; }
+    .sub-title { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; padding-bottom: 4px; border-bottom: 1px solid var(--border-color); }
+    .shap-sum { font-size: 12px; background: var(--bg-main); border-radius: 6px; padding: 8px 10px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+    .ai-tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 0 5px; border-radius: 3px; margin-left: 6px; vertical-align: 1px; color: #fff; }
+    .ai-tag.pos { background: var(--morandi-green); }
+    .ai-tag.neg { background: var(--morandi-red); }
+
+    /* 參數歷史 */
+    .card-title-extra { display: flex; align-items: center; gap: 8px; }
+    .hist-btn { border: 1px solid var(--border-color); background: var(--bg-card); color: var(--morandi-blue); font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+    .hist-btn:hover { border-color: var(--morandi-blue); background: #EEF2F6; }
+    .kv-link { cursor: pointer; border-radius: 4px; }
+    .kv-link:hover, .kv-link:focus-visible { background: #EEF2F6; outline: none; }
+
+    .modal { position: fixed; inset: 0; background: rgba(44, 62, 80, 0.45); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
+    .modal[hidden] { display: none; }
+    .modal-box { background: var(--bg-card); border-radius: var(--radius-md); width: min(820px, 100%); max-height: calc(100vh - 32px); overflow-y: auto; padding: 20px 24px; box-shadow: 0 12px 40px rgba(44, 62, 80, 0.25); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 16px; color: var(--morandi-blue); }
+    .modal-close { border: none; background: none; font-size: 18px; cursor: pointer; color: var(--text-muted); width: 32px; height: 32px; border-radius: 6px; }
+    .modal-close:hover { background: var(--bg-main); }
+    .hist-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .hist-param { font-size: 20px; font-weight: 700; }
+    .hist-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 12px 0; }
+    .hist-stats > div { background: var(--bg-main); border-radius: 8px; padding: 8px 12px; display: flex; flex-direction: column; }
+    .hist-stats span { font-size: 12px; }
+    .hist-stats strong { font-size: 20px; font-variant-numeric: tabular-nums; line-height: 1.3; }
+    .hist-stats small { font-size: 11px; color: var(--text-muted); }
+    .hist-chart { position: relative; width: 100%; }
+    .hist-chart svg { display: block; }
+    .axis-text { font-size: 11px; fill: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .chart-tip { position: absolute; pointer-events: none; background: var(--bg-card); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); border-radius: 6px; padding: 4px 10px; font-size: 12px; white-space: nowrap; }
+    .hist-legend { display: flex; gap: 16px; font-size: 12px; margin: 6px 0 12px; flex-wrap: wrap; }
+    .hist-legend span { display: flex; align-items: center; gap: 6px; }
+    .lg-line { width: 16px; height: 2px; background: var(--morandi-blue); display: inline-block; }
+    .lg-band { width: 14px; height: 10px; background: var(--band); border: 1px solid rgba(103, 138, 116, 0.3); display: inline-block; }
+    .lg-abn { width: 8px; height: 8px; border-radius: 50%; background: var(--morandi-red); display: inline-block; }
+    .hist-table-wrap { max-height: 220px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; }
+    .hist-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+    .hist-table th { position: sticky; top: 0; background: var(--bg-main); text-align: left; padding: 6px 12px; font-size: 12px; color: var(--text-muted); }
+    .hist-table td { padding: 5px 12px; border-top: 1px solid var(--border-color); }
+    @media (max-width: 700px) {
+      .hist-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .modal-box { padding: 16px; }
+    }
+
+    .rec-card { margin-top: 20px; }
+    .rec-box { background: var(--bg-main); border-radius: 8px; padding: 12px 14px; border-left: 4px solid var(--morandi-blue); }
+    .rec-box h4 { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
+    .rec-box p { font-size: 14px; font-weight: 600; }
+    .action-item { margin-top: 10px; padding: 12px; background: var(--bg-main); border-radius: 6px; font-size: 14px; }
+    .action-item strong { color: var(--morandi-blue); }
+
+    @media (max-width: 1100px) {
+      .detail-main { grid-template-columns: 1fr; }
+      .summary-strip { grid-template-columns: 1fr 1fr; }
+      .summary-strip > .strip-check { grid-column: span 2; border-left: none; padding-left: 0; border-top: 1px solid var(--border-color); padding-top: 14px; }
+    }
+    @media (max-width: 700px) {
+      body { padding: 16px; }
+      .header { padding: 14px 16px; }
+      .data-grid { grid-template-columns: 1fr; }
+      .summary-strip { grid-template-columns: 1fr; gap: 14px; }
+      .summary-strip > div + div, .summary-strip > .strip-check { grid-column: auto; border-left: none; padding-left: 0; border-top: 1px solid var(--border-color); padding-top: 14px; }
+    }
 
     /* 企劃書四大區塊 */
     .proposal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -71,7 +217,7 @@
   <header class="header">
     <div class="header-top">
       <div class="brand">🫁 SmartWean RT 智慧脫離決策支援系統</div>
-      <div class="patient-group" id="patient-info">載入病患資料中...</div>
+      <div class="unit-info" id="unit-info">載入中...</div>
     </div>
     <div class="nav-tabs">
       <button class="tab-btn active" onclick="switchTab('dashboard')">💻 臨床 Dashboard (UI 原型)</button>
@@ -79,36 +225,9 @@
     </div>
   </header>
 
-  <!-- 頁籤 1： Dashboard -->
+  <!-- 頁籤 1： Dashboard（病人清單 / 個人面板，由 hash 路由切換） -->
   <div id="tab-dashboard" class="tab-content active">
-    <main class="grid-dashboard">
-      <section class="card">
-        <div class="card-title">智慧脫離預測指數</div>
-        <div class="score-box">
-          <div style="font-size:13px; color:var(--morandi-green); font-weight:bold; margin-bottom:6px;" id="status-label">--</div>
-          <div class="score-val" id="score-val">--%</div>
-          <p style="font-size:13px; color:var(--text-muted); margin-top:8px;" id="score-desc">載入中...</p>
-        </div>
-        <div class="traffic-lights">
-          <span><i class="dot dot-green active"></i> 高成功率 (≥75%)</span>
-          <span><i class="dot dot-yellow"></i> 條件觀察中</span>
-          <span><i class="dot dot-red"></i> 高拔管風險</span>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="card-title">
-          <span>個人化關鍵影響因子 (XAI - SHAP 分析)</span>
-          <span style="font-size:12px; color:var(--text-muted);">🟢 正向推力 | 🔴 負向阻力</span>
-        </div>
-        <div id="shap-list" style="margin-top:12px;">載入分析數據中...</div>
-      </section>
-
-      <section class="card action-card">
-        <div class="card-title">💡 智慧臨床建議與處置提醒 (Actionable Guidance)</div>
-        <div id="action-list">載入建議中...</div>
-      </section>
-    </main>
+    <div id="view"><div class="loading">載入中...</div></div>
   </div>
 
   <!-- 頁籤 2： 企劃書四大重點 -->
@@ -149,6 +268,18 @@
           <li><strong>營運與財務指標：</strong>縮短平均呼吸器使用天數與加護病房住院天數、減少 RT 無效評估時間、降低健保費用扣減風險。</li>
         </ul>
       </section>
+    </div>
+  </div>
+
+  <!-- 參數歷史數據視窗 -->
+  <div id="hist-modal" class="modal" hidden>
+    <div class="modal-box" role="dialog" aria-modal="true" aria-label="參數歷史數據">
+      <div class="modal-header">
+        <strong>📈 參數歷史數據與趨勢</strong>
+        <button class="modal-close" aria-label="關閉">✕</button>
+      </div>
+      <div class="hist-chips"></div>
+      <div class="hist-body"></div>
     </div>
   </div>
 
