@@ -5,6 +5,11 @@
 ## 專案目錄結構
 - `public/`: 前端 UI 畫面 (`index.html`) 與串接邏輯 (`app.js`)
 - `server.js`: 後端 Express 伺服器與 Mock API
+  - `GET /api/v1/patients`：ICU 病人清單（含預測分數與燈號）
+  - `GET /api/v1/patients/:id/weaning-dashboard`：單一病人個人面板資料
+  - `GET /api/v1/patients/:id/history/:key`：單一參數歷史數據（如 `rsbi`、`fio2`、`pf_ratio`）
+- `data/patients.js`: Mock 病人資料與檢驗參考範圍
+- `data/history.js`: Mock 參數歷史數據產生器（種子亂數，結果可重現）
 
 ## 組員快速啟動方式 (Quick Start)
 1. 下載套件：bash npm install
